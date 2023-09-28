@@ -36,7 +36,6 @@ defineProps({
 <style scoped>
 /*パネルの基礎デザイン*/
 .panel {
-  transition-duration: 100ms;
   /*パネル内の文字を中央ぞろえ*/
   display: flex;
   align-items: center;

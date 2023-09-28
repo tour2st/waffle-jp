@@ -411,11 +411,11 @@ function check_answer(){
   for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(this.answer[i][j]!="_"){
     console.log(i, j)
     const is_blow = false;
-    for(let k=0; k<5; k++) if(!this.is_blow && this.answer[k][j]==this.panel_data[5*i+j].letter){
+    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && this.answer[k][j]==this.panel_data[5*i+j].letter){
       this.is_blow = true
       break
     }
-    for(let k=0; k<5; k++) if(!this.is_blow && this.answer[i][k]==this.panel_data[5*i+j].letter){
+    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && this.answer[i][k]==this.panel_data[5*i+j].letter){
       this.is_blow = true
       break
     }
@@ -429,36 +429,96 @@ function check_answer(){
 
 <template>
   <header>
+    <a class="left_icon" href="archive.com">アーカイブ</a>
+    <div class="title">ワッフル</div>
+    <a class="right_icon" href="archive.com">記録</a>
   </header>
   <main>
     <!--画面全体を覆うフレーム:マウスの位置を常に検知するために使用-->
     <div class="frame" @mousemove="mousemove($event)" @mouseup="otherclicked($event)">
-      <one_frame v-for="(ops, index) in one_panels"
-        :position="{x:ops.x, y:ops.y}"
-        :size="panel_size"
-        @mousedown="clicked($event, ops.index)"
-        @mouseup.stop="uped($event, ops.index)"
-      />
-      <!--各パネル:配列上のデータをpropsとして渡す-->
-      <panel v-for="(pd, index) in panel_data" 
-        :letter="pd.letter" 
-        :status="pd.status"
-        :position="{x:pd.x, y:pd.y}"
-        :offset="{x_offset:pd.x_offset, y_offset:pd.y_offset}"
-        :isselect="pd.selected"
-      />
+      <div class="problem">デイリーワッフル #001</div>
+      <div class="panels">
+        <one_frame v-for="(ops, index) in one_panels"
+          :position="{x:ops.x, y:ops.y}"
+          :size="panel_size"
+          @mousedown="clicked($event, ops.index)"
+          @mouseup.stop="uped($event, ops.index)"
+        />
+        <!--各パネル:配列上のデータをpropsとして渡す-->
+        <panel v-for="(pd, index) in panel_data" 
+          :letter="pd.letter" 
+          :status="pd.status"
+          :position="{x:pd.x, y:pd.y}"
+          :offset="{x_offset:pd.x_offset, y_offset:pd.y_offset}"
+          :isselect="pd.selected"
+        />
+      </div>
+      <div class="counter">残り交換回数 15</div>
     </div>
   </main>
 </template>
 
 <style scoped>
+
+.title {
+  position: absolute;
+  top: 0;
+  left:50%;
+  transform: translate(-50%,0);
+}
+
+.left_icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10vw;
+  height: 10vw;
+  background-color: aqua;
+}
+
+.right_icon {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 10vw;
+  height: 10vw;
+  background-color: aqua;
+  transform: translate(-100%,0);
+}
 .frame {
+  display: flex;
+  align-items: center;
   position: absolute;
   top: 0;
   left: 0;
   width:100%;
   height:100%;
-  background-color: aquamarine;
 }
 
+.panels {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 54vw;
+  height: 54.5vw;
+  transform: translate(-50%,-50%);
+}
+
+.problem {
+  position: absolute;
+  top:15%;
+  left:50%;
+  text-align: center;
+  transform: translate(-50%,-50%);
+  font-size: 3vw;
+}
+
+.counter {
+  position: absolute;
+  top:85%;
+  left:50%;
+  text-align: center;
+  transform: translate(-50%,-50%);
+  font-size: 3vw;
+}
 </style>
