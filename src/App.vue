@@ -6,6 +6,8 @@ import { reactive, ref } from 'vue'
 const selectedindex = ref(0)
 const isselected = ref(false)
 
+const count = ref(15)
+
 const start = reactive({
   x: 0,
   y: 0
@@ -353,6 +355,39 @@ function clicked(event, index) {
   this.start.y = this.panel_data[this.selectedindex].y
 }
 
+function check_answer(){
+  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answer[i][j]!="_"){
+    if(answer[i][j]==this.panel_data[5*i+j].letter){
+      answer[i][j] = "_"
+      this.panel_data[5*i+j].status = "hit"
+    }
+  }
+  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answer[i][j]!="_"){
+    const is_blow = false;
+    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[k][j]==this.panel_data[5*i+j].letter){
+      this.is_blow = true
+      break
+    }
+    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[i][k]==this.panel_data[5*i+j].letter){
+      this.is_blow = true
+      break
+    }
+    if(this.is_blow) this.panel_data[5*i+j].status = "blow" 
+    else this.panel_data[5*i+j].status = "miss"
+    this.is_blow = false
+  }
+}
+
+function is_clear()
+{
+  console.log("is_clear?");
+}
+
+function is_game_over()
+{
+  console.log("game_over")
+}
+
 function uped(event, index) {
   if(this.isselected==false) return
   if(this.panel_data[index].status == "hit")
@@ -364,6 +399,12 @@ function uped(event, index) {
   console.log(index)
   this.end_panel = index
   console.log("change" + this.start_panel + " " + this.end_panel)
+  if(this.end_panel==this.start_panel){
+    this.otherclicked(event)
+    console.log("same panel")
+    return
+  }
+  count.value--;
   //選択中を外す
   this.isselected = false
   this.panel_data[this.selectedindex].selected = false
@@ -384,6 +425,9 @@ function uped(event, index) {
   this.panel_data[this.selectedindex] = temp
 
   this.check_answer();
+
+  this.is_clear();
+  if(count.value==0)this.is_game_over();
 }
 
 function otherclicked(event) {
@@ -398,73 +442,76 @@ function otherclicked(event) {
   this.panel_data[this.selectedindex].y = this.start.y
 
 }
-
-function check_answer(){
-  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(this.answer[i][j]!="_"){
-    if(this.answer[i][j]==this.panel_data[5*i+j].letter){
-      console.log(i, j)
-      console.log(this.panel_data[5*i+j].status)
-      this.answer[i][j] = "_"
-      this.panel_data[5*i+j].status = "hit"
-    }
-  }
-  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(this.answer[i][j]!="_"){
-    console.log(i, j)
-    const is_blow = false;
-    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && this.answer[k][j]==this.panel_data[5*i+j].letter){
-      this.is_blow = true
-      break
-    }
-    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && this.answer[i][k]==this.panel_data[5*i+j].letter){
-      this.is_blow = true
-      break
-    }
-    if(this.is_blow) this.panel_data[5*i+j].status = "blow" 
-    else this.panel_data[5*i+j].status = "miss"
-    console.log(this.panel_data[5*i+j].status);
-    this.is_blow = false
-  }
-}
 </script>
 
 <template>
+    <head>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&family=Onest:wght@900&display=swap" rel="stylesheet">
+    </head>
   <header>
-    <a class="left_icon" href="archive.com">アーカイブ</a>
-    <div class="title">ワッフル</div>
-    <a class="right_icon" href="archive.com">記録</a>
+    <div class="title">waffle JP</div>
   </header>
   <main>
     <!--画面全体を覆うフレーム:マウスの位置を常に検知するために使用-->
     <div class="frame" @mousemove="mousemove($event)" @mouseup="otherclicked($event)">
-      <div class="problem">デイリーワッフル #001</div>
-      <div class="panels">
-        <one_frame v-for="(ops, index) in one_panels"
-          :position="{x:ops.x, y:ops.y}"
-          :size="panel_size"
-          @mousedown="clicked($event, ops.index)"
-          @mouseup.stop="uped($event, ops.index)"
-        />
-        <!--各パネル:配列上のデータをpropsとして渡す-->
-        <panel v-for="(pd, index) in panel_data" 
-          :letter="pd.letter" 
-          :status="pd.status"
-          :position="{x:pd.x, y:pd.y}"
-          :offset="{x_offset:pd.x_offset, y_offset:pd.y_offset}"
-          :isselect="pd.selected"
-        />
+      <div class="container">
+        <div class="left_icon" href="archive.com">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-history" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M12 8l0 4l2 2"></path>
+            <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"></path>
+          </svg>
+        </div>
+        <div class="right_icon" href="archive.com">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chart-bar" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M3 12m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+            <path d="M9 8m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+            <path d="M15 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+            <path d="M4 20l14 0"></path>
+          </svg>
+        </div>
+        <div class="problem">daily waffle #001</div>
+        <div class="panels">
+          <one_frame v-for="(ops, index) in one_panels"
+            :position="{x:ops.x, y:ops.y}"
+            :size="panel_size"
+            @mousedown="clicked($event, ops.index)"
+            @mouseup.stop="uped($event, ops.index)"
+          />
+          <!--各パネル:配列上のデータをpropsとして渡す-->
+          <panel v-for="(pd, index) in panel_data" 
+            :letter="pd.letter" 
+            :status="pd.status"
+            :position="{x:pd.x, y:pd.y}"
+            :offset="{x_offset:pd.x_offset, y_offset:pd.y_offset}"
+            :isselect="pd.selected"
+          />
+        </div>
+        <div class="counter">{{count}} swaps remaining</div>
       </div>
-      <div class="counter">残り交換回数 15</div>
     </div>
   </main>
 </template>
 
 <style scoped>
+* {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+}
 
+.icon {
+  transform: scale(1.5,1.5);
+  cursor: pointer;
+}
 .title {
   position: absolute;
   top: 0;
   left:50%;
   transform: translate(-50%,0);
+  font-size: 5vw;
+  z-index: 1;
 }
 
 .left_icon {
@@ -473,7 +520,10 @@ function check_answer(){
   left: 0;
   width: 10vw;
   height: 10vw;
-  background-color: aqua;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .right_icon {
@@ -482,43 +532,52 @@ function check_answer(){
   left: 100%;
   width: 10vw;
   height: 10vw;
-  background-color: aqua;
-  transform: translate(-100%,0);
-}
-.frame {
+  z-index: 1;
+  transform: translate(-100%, 0);
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+.frame {
   position: absolute;
   top: 0;
   left: 0;
   width:100%;
   height:100%;
+  background-color: #eee;
+  justify-content: center;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
 }
 
 .panels {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 54vw;
-  height: 54.5vw;
-  transform: translate(-50%,-50%);
+  position: relative;
+  width: 54.1vw;
+  height: 54.6vw;
 }
 
 .problem {
-  position: absolute;
-  top:15%;
-  left:50%;
-  text-align: center;
-  transform: translate(-50%,-50%);
+  margin: 5vw;
   font-size: 3vw;
 }
 
 .counter {
-  position: absolute;
-  top:85%;
-  left:50%;
-  text-align: center;
-  transform: translate(-50%,-50%);
+  margin: 3vw;
   font-size: 3vw;
+}
+
+.container {
+  background-color: white;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  
+  position: absolute;
+  top: 0px;
+
+  width: 70vw;
+  height: 90vw;
 }
 </style>
