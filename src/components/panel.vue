@@ -90,6 +90,57 @@ defineProps({
 .nothing {
   visibility: hidden;
 }
+
+.gameover {
+  background-color: #333;
+  box-shadow: 0 0.5vw #111;
+  border-color: #111;
+  color: #fff;
+  transition: 1s;
+}
+
+.gameclear {
+  background-color: #6b5;
+  box-shadow: 0 0.5vw #593;
+  border-color: #6b5;
+  color: #fff;
+  animation-name: jump;
+  animation-fill-mode:forwards;/*2で解説*/
+  animation-duration:0.5s;/*3で解説*/
+  animation-iteration-count:1;/*4で解説*/
+  animation-timing-function:ease-out;/*5で解説*/
+  animation-delay: 0s;/*6で解説*/
+}
+
+@keyframes jump{
+  0% {
+    background-color: #6b5;
+    box-shadow: 0 0.5vw #593;
+    border-color: #6b5;
+  }
+  25% {
+    background-color: #0b7;
+    box-shadow: 0 0.5vw #095;
+    border-color: #0b7;
+  }
+  50% {
+    background-color: #c83;
+    box-shadow: 0 0.5vw #a61;
+    border-color: #c83;
+    transform: translate(0, -1vw)
+  }
+  75% {
+    background-color: #cc0;
+    box-shadow: 0 0.5vw #aa0;
+    border-color: #cc0;
+  }
+  100% {
+    background-color: #6b5;
+    box-shadow: 0 0.5vw #593;
+    border-color: #6b5;
+  }
+}
+
 /*文字を選択禁止&文字のマウスイベントを止める*/
 .letter {
   user-select: none;

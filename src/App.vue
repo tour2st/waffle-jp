@@ -1,18 +1,22 @@
 <script setup>
 import panel from './components/panel.vue'
 import one_frame from './components/1-frame.vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 
-const selectedindex = ref(0)
-const isselected = ref(false)
+//TODO: selectedindex:= -1->何も選択していない , 0- ->その番号を選択で一致させる
+let selectedindex = 0
+let isselected = false
 
+//TODO:もっといい命名を
 const count = ref(15)
 
-const start = reactive({
+//TODO:もっといい命名を
+const start = {
   x: 0,
   y: 0
-})
+}
 
+//TODO:これを用いて途中で画面サイズを変更した際のバグと操作がズレるバグを直す
 const panel_size = ref((window.innerWidth*0.11).toFixed())
 
 const answer = [["あ","い","う","あ","あ"],
@@ -20,7 +24,8 @@ const answer = [["あ","い","う","あ","あ"],
                 ["あ","あ","お","あ","あ"],
                 ["あ","_","あ","_","あ"],
                 ["あ","あ","あ","あ","あ"]]
-              
+
+//TODO:hiddenフラグを追加してクリア時に枠を消す
 const one_panels = reactive([{x:0, y:0, index: 0},{x:1, y:0, index: 1},{x:2, y:0, index: 2}, {x:3, y:0, index: 3},{x:4, y:0, index: 4},
                              {x:0, y:1, index: 5},                     {x:2, y:1, index: 7},                      {x:4, y:1, index: 9},
                              {x:0, y:2, index:10},{x:1, y:2, index:11},{x:2, y:2, index:12}, {x:3, y:2, index:13},{x:4, y:2, index:14},
@@ -118,7 +123,7 @@ const panel_data = reactive([
   },
   {
     letter: "け",
-    x: 1,
+    x: 3,
     y: 1,
     x_offset: 0,
     y_offset: 0,
@@ -207,7 +212,7 @@ const panel_data = reactive([
   {
     letter: "ち",
     x: 1,
-    y: 1,
+    y: 3,
     x_offset: 0,
     y_offset: 0,
     status: "nothing",
@@ -228,8 +233,8 @@ const panel_data = reactive([
   },
   {
     letter: "て",
-    x: 1,
-    y: 1,
+    x: 3,
+    y: 3,
     x_offset: 0,
     y_offset: 0,
     status: "nothing",
@@ -305,92 +310,89 @@ const panel_data = reactive([
   },
 ])
 
-//パネル上でマウスを押したときの動作
-function mousedown(event, index)
-{
-  //selectedindex を 選択中にする
-  this.selectedindex = index
-  this.isselected = true
-
-  //パネルとカーソルの間の差分
-  
-  this.panel_data[this.selectedindex].x_offset = (event.x/this.panel_size - this.panel_data[this.selectedindex].x)
-  this.panel_data[this.selectedindex].y_offset = (event.y/this.panel_size - this.panel_data[this.selectedindex].y)
-  
-  this.panel_data[this.selectedindex].selected = true
-
-  this.start.x = this.panel_data[this.selectedindex].x
-  this.start.y = this.panel_data[this.selectedindex].y
-
-}
-
+//TODO:もっといい命名を行い、コメントを足す
 //画面上でマウスを操作した際の動作
 function mousemove(event)
 {
   //選択中なら選択中のパネルを動かす
-  if(this.isselected){
+  if(isselected){
     //propsとして渡している(x,y)をマウスに合わせて移動
     //パネルとカーソルの間の差分を埋め合わせて常にパネルの同じ部分をつかめるようにする
-    this.panel_data[this.selectedindex].x = event.x/this.panel_size - this.panel_data[this.selectedindex].x_offset
-    this.panel_data[this.selectedindex].y = event.y/this.panel_size - this.panel_data[this.selectedindex].y_offset
+    panel_data[selectedindex].x = event.x/this.panel_size - panel_data[selectedindex].x_offset
+    panel_data[selectedindex].y = event.y/this.panel_size - panel_data[selectedindex].y_offset
   }
 }
 
+//TODO:もっといい命名を行い、コメントを足す
 function clicked(event, index) {
-  if(this.isselected || this.panel_data[index].status=="hit") return
+  if(isselected || panel_data[index].status=="hit" || panel_data[index].status=="gameclear" || panel_data[index].status=="gameover") return
   console.log(index)
-  this.start_panel = index
+  selectedindex = index
   //selectedindex を 選択中にする
-  this.selectedindex = index
-  this.isselected = true
+  selectedindex = index
+  isselected = true
 
   //パネルとカーソルの間の差分
   
-  this.panel_data[this.selectedindex].x_offset = (event.x/this.panel_size - this.panel_data[this.selectedindex].x)
-  this.panel_data[this.selectedindex].y_offset = (event.y/this.panel_size - this.panel_data[this.selectedindex].y)
+  panel_data[selectedindex].x_offset = (event.x/this.panel_size - panel_data[selectedindex].x)
+  panel_data[selectedindex].y_offset = (event.y/this.panel_size - panel_data[selectedindex].y)
   
-  this.panel_data[this.selectedindex].selected = true
+  panel_data[selectedindex].selected = true
 
-  this.start.x = this.panel_data[this.selectedindex].x
-  this.start.y = this.panel_data[this.selectedindex].y
+  start.x = panel_data[selectedindex].x
+  start.y = panel_data[selectedindex].y
 }
 
+
+//TODO:もっといい命名を行い、コメントを足す
 function check_answer(){
   for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answer[i][j]!="_"){
-    if(answer[i][j]==this.panel_data[5*i+j].letter){
+    if(answer[i][j]==panel_data[5*i+j].letter){
       answer[i][j] = "_"
-      this.panel_data[5*i+j].status = "hit"
+      panel_data[5*i+j].status = "hit"
     }
   }
   for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answer[i][j]!="_"){
     const is_blow = false;
-    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[k][j]==this.panel_data[5*i+j].letter){
+    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[k][j]==panel_data[5*i+j].letter){
       this.is_blow = true
       break
     }
-    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[i][k]==this.panel_data[5*i+j].letter){
+    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[i][k]==panel_data[5*i+j].letter){
       this.is_blow = true
       break
     }
-    if(this.is_blow) this.panel_data[5*i+j].status = "blow" 
-    else this.panel_data[5*i+j].status = "miss"
+    if(this.is_blow) panel_data[5*i+j].status = "blow" 
+    else panel_data[5*i+j].status = "miss"
     this.is_blow = false
   }
 }
 
+//TODO:もっといい命名を行い、コメントを足す
 function is_clear()
 {
-  console.log("is_clear?");
+  let flag = true;
+  for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
+    if(answer[i][j]!='_') flag = false;
+  }
+  if(flag) for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
+    if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameclear"
+  }
+  return flag
 }
 
+//TODO:もっといい命名を行い、コメントを足す
 function is_game_over()
 {
-  console.log("game_over")
+  for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
+    if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameover"
+  }
 }
 
+//TODO:もっといい命名を行い、コメントを足す
 function uped(event, index) {
-  if(this.isselected==false) return
-  if(this.panel_data[index].status == "hit")
+  if(isselected==false) return
+  if(panel_data[index].status == "hit")
   {
     console.log("!")
     this.otherclicked(event)
@@ -398,53 +400,58 @@ function uped(event, index) {
   }
   console.log(index)
   this.end_panel = index
-  console.log("change" + this.start_panel + " " + this.end_panel)
-  if(this.end_panel==this.start_panel){
+  console.log("change" + selectedindex + " " + this.end_panel)
+  if(this.end_panel==selectedindex){
     this.otherclicked(event)
     console.log("same panel")
     return
   }
   count.value--;
   //選択中を外す
-  this.isselected = false
-  this.panel_data[this.selectedindex].selected = false
+  isselected = false
+  panel_data[selectedindex].selected = false
   //選択中のインデックスと座標を用いて操作を実行
 
-  this.panel_data[this.selectedindex].x = event.x/this.panel_size - this.panel_data[this.selectedindex].x_offset 
-  this.panel_data[this.selectedindex].y = event.y/this.panel_size - this.panel_data[this.selectedindex].y_offset 
+  panel_data[selectedindex].x = event.x/this.panel_size - panel_data[selectedindex].x_offset 
+  panel_data[selectedindex].y = event.y/this.panel_size - panel_data[selectedindex].y_offset 
 
-  this.panel_data[this.selectedindex].x = this.panel_data[this.selectedindex].x.toFixed()
-  this.panel_data[this.selectedindex].y = this.panel_data[this.selectedindex].y.toFixed()
+  panel_data[selectedindex].x = panel_data[selectedindex].x.toFixed()
+  panel_data[selectedindex].y = panel_data[selectedindex].y.toFixed()
 
   console.log("changed!!")
-  this.panel_data[index].x = this.start.x
-  this.panel_data[index].y = this.start.y
+  panel_data[index].x = start.x
+  panel_data[index].y = start.y
 
-  const temp = this.panel_data[index]
-  this.panel_data[index] = this.panel_data[this.selectedindex]
-  this.panel_data[this.selectedindex] = temp
+  const temp = panel_data[index]
+  panel_data[index] = panel_data[selectedindex]
+  panel_data[selectedindex] = temp
 
   this.check_answer();
 
-  this.is_clear();
-  if(count.value==0)this.is_game_over();
+  if(!this.is_clear() && count.value==0)this.is_game_over();
 }
 
+//TODO:もっといい命名を行い、コメントを足す
 function otherclicked(event) {
   console.log("other area is clicked")
-  console.log(this.start_panel)
+  console.log(selectedindex, selectedindex)
   //選択中を外す
-  this.isselected = false
-  this.panel_data[this.selectedindex].selected = false
+  isselected = false
+  panel_data[selectedindex].selected = false
   //選択中のインデックスと座標を用いて操作を実行
 
-  this.panel_data[this.selectedindex].x = this.start.x
-  this.panel_data[this.selectedindex].y = this.start.y
-
+  panel_data[selectedindex].x = start.x
+  panel_data[selectedindex].y = start.y
 }
+
+//TODO:変数参照のバグを直して、マウント時にパネルの状態を変更する関数を生成
+onMounted(() => {
+  console.log("mounted")
+})
 </script>
 
 <template>
+  <!--コメントを足す　&& アイコン部分は子コンポーネントに分割-->
     <head>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -496,7 +503,10 @@ function otherclicked(event) {
   </main>
 </template>
 
+
 <style scoped>
+/*base.cssを活用して記述量を全体的に減らす*/
+/*もっと分かりやすいクラス名を使う*/
 * {
   font-family: 'M PLUS Rounded 1c', sans-serif;
 }
