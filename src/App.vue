@@ -3,35 +3,46 @@ import panel from './components/panel.vue'
 import one_frame from './components/1-frame.vue'
 import { reactive, ref, onMounted } from 'vue'
 
-//TODO: selectedindex:= -1->何も選択していない , 0- ->その番号を選択で一致させる
-let selectedindex = 0
-let isselected = false
+//selectingIndex:= [-1] -> 何も選択していない , [0, 1, 2 ... -> その番号を選択中
+let selectingIndex = -1
 
-//TODO:もっといい命名を
-const count = ref(15)
+//残り操作回数(初期設定:15)
+const swapsRemain = ref(15)
 
-//TODO:もっといい命名を
-const start = {
-  x: 0,
-  y: 0
-}
+//パネル１つ当たりのサイズ
+const panelSize = ref((window.innerWidth*0.11).toFixed())
 
-//TODO:これを用いて途中で画面サイズを変更した際のバグと操作がズレるバグを直す
-const panel_size = ref((window.innerWidth*0.11).toFixed())
+//答えの文字配列
+const answerLetter = [["あ","い","う","あ","あ"],
+                      ["あ", "_","え", "_","あ"],
+                      ["あ","あ","お","あ","あ"],
+                      ["あ", "_","あ", "_","あ"],
+                      ["あ","あ","あ","あ","あ"]]
 
-const answer = [["あ","い","う","あ","あ"],
-                ["あ","_","え","_","あ"],
-                ["あ","あ","お","あ","あ"],
-                ["あ","_","あ","_","あ"],
-                ["あ","あ","あ","あ","あ"]]
+/*フレームに渡すprops群
 
-//TODO:hiddenフラグを追加してクリア時に枠を消す
+  x:=左からのマス目(0-indexed)
+  y:=上からのマス目(0-indexed)
+  index:=クリック時にイベントに渡す番号
+*/
 const one_panels = reactive([{x:0, y:0, index: 0},{x:1, y:0, index: 1},{x:2, y:0, index: 2}, {x:3, y:0, index: 3},{x:4, y:0, index: 4},
                              {x:0, y:1, index: 5},                     {x:2, y:1, index: 7},                      {x:4, y:1, index: 9},
                              {x:0, y:2, index:10},{x:1, y:2, index:11},{x:2, y:2, index:12}, {x:3, y:2, index:13},{x:4, y:2, index:14},
                              {x:0, y:3, index:15},                     {x:2, y:3, index:17},                      {x:4, y:3, index:19},
                              {x:0, y:4, index:20},{x:1, y:4, index:21},{x:2, y:4, index:22}, {x:3, y:4, index:23},{x:4, y:4, index:24}])
 
+
+/*各パネルに渡すprops群
+
+  letter:=表示される文字
+  x:=左からのマス目(float)
+  y:=上からのマス目(float)
+  x_offset:=クリックしたx座標とパネルのx座標の差分
+  y_offset:=クリックしたy座標とパネルのy座標の差分
+  status:=パネルの状態(hit/blow/miss/gameover/gameclear)
+  selected:=現在選択中かどうか
+  size:=パネルのサイズ
+*/
 const panel_data = reactive([
   {
     letter: "あ",
@@ -41,7 +52,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "hit",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -52,7 +63,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "blow",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -63,7 +74,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "miss",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -74,7 +85,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "hit",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -85,7 +96,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "blow",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -96,7 +107,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "miss",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -107,7 +118,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "nothing",
     selected: false,
-    size: panel_size,
+    size: panelSize,
 
   },
   {
@@ -118,7 +129,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "blow",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -129,7 +140,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "nothing",
     selected: false,
-    size: panel_size,
+    size: panelSize,
 
   },
   {
@@ -140,7 +151,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "hit",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -151,7 +162,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "blow",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -162,7 +173,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "miss",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -173,7 +184,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "hit",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -184,7 +195,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "blow",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -195,7 +206,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "miss",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -206,7 +217,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "hit",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -217,7 +228,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "nothing",
     selected: false,
-    size: panel_size,
+    size: panelSize,
 
   },
   {
@@ -228,7 +239,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "miss",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -239,7 +250,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "nothing",
     selected: false,
-    size: panel_size,
+    size: panelSize,
 
   },
   {
@@ -250,7 +261,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "blow",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -261,7 +272,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "miss",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -272,7 +283,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "hit",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -283,7 +294,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "blow",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -294,7 +305,7 @@ const panel_data = reactive([
     y_offset: 0,
     status: "miss",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
   {
@@ -305,60 +316,56 @@ const panel_data = reactive([
     y_offset: 0,
     status: "hit",
     selected: false,
-    size: panel_size
+    size: panelSize
 
   },
 ])
 
-//TODO:もっといい命名を行い、コメントを足す
-//画面上でマウスを操作した際の動作
-function mousemove(event)
+
+//画面上でマウスが移動した場合の挙動
+function updateOnMouseMove(event)
 {
   //選択中なら選択中のパネルを動かす
-  if(isselected){
-    //propsとして渡している(x,y)をマウスに合わせて移動
-    //パネルとカーソルの間の差分を埋め合わせて常にパネルの同じ部分をつかめるようにする
-    panel_data[selectedindex].x = event.x/this.panel_size - panel_data[selectedindex].x_offset
-    panel_data[selectedindex].y = event.y/this.panel_size - panel_data[selectedindex].y_offset
+  if(selectingIndex>-1){
+    //propsとして渡している(x,y)をマウスに合わせて変更
+    //offsetを埋め合わせて常にパネルの同じ部分をつかめるようにする
+    panel_data[selectingIndex].x = event.x/this.panelSize - panel_data[selectingIndex].x_offset
+    panel_data[selectingIndex].y = event.y/this.panelSize - panel_data[selectingIndex].y_offset
   }
 }
 
-//TODO:もっといい命名を行い、コメントを足す
-function clicked(event, index) {
-  if(isselected || panel_data[index].status=="hit" || panel_data[index].status=="gameclear" || panel_data[index].status=="gameover") return
+//パネル上でマウスを押下した場合の挙動
+function startOnMouseDown(event, index) {
+  if(selectingIndex>-1 || panel_data[index].status=="hit" || panel_data[index].status=="gameclear" || panel_data[index].status=="gameover") return
   console.log(index)
-  selectedindex = index
-  //selectedindex を 選択中にする
-  selectedindex = index
-  isselected = true
+  selectingIndex = index
+  //selectingIndex を 選択中にする
+  selectingIndex = index
 
   //パネルとカーソルの間の差分
   
-  panel_data[selectedindex].x_offset = (event.x/this.panel_size - panel_data[selectedindex].x)
-  panel_data[selectedindex].y_offset = (event.y/this.panel_size - panel_data[selectedindex].y)
+  panel_data[selectingIndex].x_offset = (event.x/this.panelSize - panel_data[selectingIndex].x)
+  panel_data[selectingIndex].y_offset = (event.y/this.panelSize - panel_data[selectingIndex].y)
   
-  panel_data[selectedindex].selected = true
-
-  start.x = panel_data[selectedindex].x
-  start.y = panel_data[selectedindex].y
+  panel_data[selectingIndex].selected = true
 }
 
 
 //TODO:もっといい命名を行い、コメントを足す
-function check_answer(){
-  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answer[i][j]!="_"){
-    if(answer[i][j]==panel_data[5*i+j].letter){
-      answer[i][j] = "_"
+function checkAnswer(){
+  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answerLetter[i][j]!="_"){
+    if(answerLetter[i][j]==panel_data[5*i+j].letter){
+      answerLetter[i][j] = "_"
       panel_data[5*i+j].status = "hit"
     }
   }
-  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answer[i][j]!="_"){
+  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answerLetter[i][j]!="_"){
     const is_blow = false;
-    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[k][j]==panel_data[5*i+j].letter){
+    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answerLetter[k][j]==panel_data[5*i+j].letter){
       this.is_blow = true
       break
     }
-    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answer[i][k]==panel_data[5*i+j].letter){
+    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answerLetter[i][k]==panel_data[5*i+j].letter){
       this.is_blow = true
       break
     }
@@ -369,11 +376,11 @@ function check_answer(){
 }
 
 //TODO:もっといい命名を行い、コメントを足す
-function is_clear()
+function checkGameClear()
 {
   let flag = true;
   for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
-    if(answer[i][j]!='_') flag = false;
+    if(answerLetter[i][j]!='_') flag = false;
   }
   if(flag) for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
     if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameclear"
@@ -382,7 +389,7 @@ function is_clear()
 }
 
 //TODO:もっといい命名を行い、コメントを足す
-function is_game_over()
+function checkGameOver()
 {
   for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
     if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameover"
@@ -390,63 +397,61 @@ function is_game_over()
 }
 
 //TODO:もっといい命名を行い、コメントを足す
-function uped(event, index) {
-  if(isselected==false) return
+function endOnMouseUp(event, index) {
+  if(selectingIndex==-1) return
   if(panel_data[index].status == "hit")
   {
     console.log("!")
-    this.otherclicked(event)
+    this.otherarea(event)
     return 
   }
-  console.log(index)
-  this.end_panel = index
-  console.log("change" + selectedindex + " " + this.end_panel)
-  if(this.end_panel==selectedindex){
-    this.otherclicked(event)
+  if(index==selectingIndex){
+    this.otherarea(event)
     console.log("same panel")
     return
   }
-  count.value--;
+  swapsRemain.value--;
   //選択中を外す
-  isselected = false
-  panel_data[selectedindex].selected = false
+  panel_data[selectingIndex].selected = false
   //選択中のインデックスと座標を用いて操作を実行
 
-  panel_data[selectedindex].x = event.x/this.panel_size - panel_data[selectedindex].x_offset 
-  panel_data[selectedindex].y = event.y/this.panel_size - panel_data[selectedindex].y_offset 
+  panel_data[selectingIndex].x = event.x/this.panelSize - panel_data[selectingIndex].x_offset 
+  panel_data[selectingIndex].y = event.y/this.panelSize - panel_data[selectingIndex].y_offset 
 
-  panel_data[selectedindex].x = panel_data[selectedindex].x.toFixed()
-  panel_data[selectedindex].y = panel_data[selectedindex].y.toFixed()
+  panel_data[selectingIndex].x = index%5
+  panel_data[selectingIndex].y = (index-index%5)/5
 
   console.log("changed!!")
-  panel_data[index].x = start.x
-  panel_data[index].y = start.y
+  panel_data[index].x = selectingIndex%5
+  panel_data[index].y = (selectingIndex-selectingIndex%5)/5
 
   const temp = panel_data[index]
-  panel_data[index] = panel_data[selectedindex]
-  panel_data[selectedindex] = temp
+  panel_data[index] = panel_data[selectingIndex]
+  panel_data[selectingIndex] = temp
 
-  this.check_answer();
+  selectingIndex = -1
 
-  if(!this.is_clear() && count.value==0)this.is_game_over();
+  this.checkAnswer();
+
+  if(!this.checkGameClear() && swapsRemain.value==0)this.checkGameOver();
 }
 
 //TODO:もっといい命名を行い、コメントを足す
-function otherclicked(event) {
-  console.log("other area is clicked")
-  console.log(selectedindex, selectedindex)
+//選択していないときの例外処理追加
+function otherarea(event) {
+  console.log("other area is startOnMouseDown")
+  console.log(selectingIndex, selectingIndex)
   //選択中を外す
-  isselected = false
-  panel_data[selectedindex].selected = false
+  panel_data[selectingIndex].selected = false
   //選択中のインデックスと座標を用いて操作を実行
-
-  panel_data[selectedindex].x = start.x
-  panel_data[selectedindex].y = start.y
+  panel_data[selectingIndex].x = selectingIndex%5
+  panel_data[selectingIndex].y = (selectingIndex-selectingIndex%5)/5
+  selectingIndex = -1
 }
 
 //TODO:変数参照のバグを直して、マウント時にパネルの状態を変更する関数を生成
 onMounted(() => {
-  console.log("mounted")
+  console.log("mounted");
 })
 </script>
 
@@ -462,7 +467,7 @@ onMounted(() => {
   </header>
   <main>
     <!--画面全体を覆うフレーム:マウスの位置を常に検知するために使用-->
-    <div class="frame" @mousemove="mousemove($event)" @mouseup="otherclicked($event)">
+    <div class="frame" @mousemove="updateOnMouseMove($event)" @mouseup="otherarea($event)">
       <div class="container">
         <div class="left_icon" href="archive.com">
           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-history" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -484,9 +489,9 @@ onMounted(() => {
         <div class="panels">
           <one_frame v-for="(ops, index) in one_panels"
             :position="{x:ops.x, y:ops.y}"
-            :size="panel_size"
-            @mousedown="clicked($event, ops.index)"
-            @mouseup.stop="uped($event, ops.index)"
+            :size="panelSize"
+            @mousedown="startOnMouseDown($event, ops.index)"
+            @mouseup.stop="endOnMouseUp($event, ops.index)"
           />
           <!--各パネル:配列上のデータをpropsとして渡す-->
           <panel v-for="(pd, index) in panel_data" 
@@ -497,7 +502,7 @@ onMounted(() => {
             :isselect="pd.selected"
           />
         </div>
-        <div class="counter">{{count}} swaps remaining</div>
+        <div class="counter">{{swapsRemain}} swaps remaining</div>
       </div>
     </div>
   </main>
