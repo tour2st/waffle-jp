@@ -12,7 +12,11 @@ const swapsRemain = ref(15)
 //パネル１つ当たりのサイズ
 const panelSize = ref((window.innerWidth*0.11).toFixed())
 
-//答えの文字配列
+/*答えの文字配列
+
+"_":すでに一致しているorパネルが存在しない
+"[あ-ん]":その文字が答え
+*/
 const answerLetter = [["あ","い","う","あ","あ"],
                       ["あ", "_","え", "_","あ"],
                       ["あ","あ","お","あ","あ"],
@@ -25,7 +29,7 @@ const answerLetter = [["あ","い","う","あ","あ"],
   y:=上からのマス目(0-indexed)
   index:=クリック時にイベントに渡す番号
 */
-const one_panels = reactive([{x:0, y:0, index: 0},{x:1, y:0, index: 1},{x:2, y:0, index: 2}, {x:3, y:0, index: 3},{x:4, y:0, index: 4},
+const onePanels = reactive([{x:0, y:0, index: 0},{x:1, y:0, index: 1},{x:2, y:0, index: 2}, {x:3, y:0, index: 3},{x:4, y:0, index: 4},
                              {x:0, y:1, index: 5},                     {x:2, y:1, index: 7},                      {x:4, y:1, index: 9},
                              {x:0, y:2, index:10},{x:1, y:2, index:11},{x:2, y:2, index:12}, {x:3, y:2, index:13},{x:4, y:2, index:14},
                              {x:0, y:3, index:15},                     {x:2, y:3, index:17},                      {x:4, y:3, index:19},
@@ -327,6 +331,7 @@ function updateOnMouseMove(event)
 {
   //選択中なら選択中のパネルを動かす
   if(selectingIndex>-1){
+
     //propsとして渡している(x,y)をマウスに合わせて変更
     //offsetを埋め合わせて常にパネルの同じ部分をつかめるようにする
     panel_data[selectingIndex].x = event.x/this.panelSize - panel_data[selectingIndex].x_offset
@@ -336,123 +341,146 @@ function updateOnMouseMove(event)
 
 //パネル上でマウスを押下した場合の挙動
 function startOnMouseDown(event, index) {
+  
+  //すでに選択中or干渉できない状態の場合何もしない
   if(selectingIndex>-1 || panel_data[index].status=="hit" || panel_data[index].status=="gameclear" || panel_data[index].status=="gameover") return
-  console.log(index)
-  selectingIndex = index
+
   //selectingIndex を 選択中にする
   selectingIndex = index
-
-  //パネルとカーソルの間の差分
+  panel_data[selectingIndex].selected = true
   
+  //パネルとカーソルの間の差分更新
   panel_data[selectingIndex].x_offset = (event.x/this.panelSize - panel_data[selectingIndex].x)
   panel_data[selectingIndex].y_offset = (event.y/this.panelSize - panel_data[selectingIndex].y)
-  
-  panel_data[selectingIndex].selected = true
 }
 
 
-//TODO:もっといい命名を行い、コメントを足す
+//答えに合わせてパネルのhit/blow/missを切り替え
 function checkAnswer(){
-  for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answerLetter[i][j]!="_"){
-    if(answerLetter[i][j]==panel_data[5*i+j].letter){
+
+  //ゲームクリアしているならゲームクリア状態に変更
+  if(this.checkGameClear()){
+    if(flag) for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
+      if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameclear"
+    }
+    return
+  }
+  //ゲームオーバーならゲームオーバー状態に変更
+  if(this.checkGameOver())
+  {
+    for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
+      console.log(i,j)
+      if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameover"
+    }
+    return
+  }
+
+  //答えと一致するならhitに変更
+  for(let i=0; i<5; i++) for(let j=0; j<5; j++){
+    if(answerLetter[i][j]!="_" && answerLetter[i][j]==panel_data[5*i+j].letter){
       answerLetter[i][j] = "_"
       panel_data[5*i+j].status = "hit"
     }
   }
+
+  //各行と列に答えのパネルがあるならblowに変更
   for(let i=0; i<5; i++) for(let j=0; j<5; j++) if(answerLetter[i][j]!="_"){
-    const is_blow = false;
-    if(j%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answerLetter[k][j]==panel_data[5*i+j].letter){
-      this.is_blow = true
+    //blowかどうか
+    let is_blow = false;
+    
+    //行を見る
+    if(j%2==0) for(let ki=0; ki<5; ki++) if(!is_blow && answerLetter[ki][j]==panel_data[5*i+j].letter){
+      is_blow = true
+      console.log(panel_data[5*i+j].letter)
       break
     }
-    if(i%2==0) for(let k=0; k<5; k++) if(!this.is_blow && answerLetter[i][k]==panel_data[5*i+j].letter){
-      this.is_blow = true
+    //列を見る
+    if(i%2==0) for(let kj=0; kj<5; kj++) if(!is_blow && answerLetter[i][kj]==panel_data[5*i+j].letter){
+      is_blow = true
       break
     }
-    if(this.is_blow) panel_data[5*i+j].status = "blow" 
+    //is_blowならばblowに変更
+    //そうでないならばmissに変更
+    if(is_blow) panel_data[5*i+j].status = "blow" 
     else panel_data[5*i+j].status = "miss"
-    this.is_blow = false
+    is_blow = false
   }
 }
 
-//TODO:もっといい命名を行い、コメントを足す
+//TODO: check と update を分ける
 function checkGameClear()
 {
   let flag = true;
   for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
     if(answerLetter[i][j]!='_') flag = false;
   }
-  if(flag) for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
-    if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameclear"
-  }
   return flag
 }
 
-//TODO:もっといい命名を行い、コメントを足す
+//checkではなく演出なので命名変更
 function checkGameOver()
 {
-  for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
-    if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameover"
-  }
+  return swapsRemain.value==0 && !this.checkGameClear();
 }
 
-//TODO:もっといい命名を行い、コメントを足す
+//マウスボタンを上げたときの挙動
 function endOnMouseUp(event, index) {
+  //選択していないなら何もしない
   if(selectingIndex==-1) return
+
+  //正解のパネルと入れ替えようとした場合何もしない
   if(panel_data[index].status == "hit")
   {
     console.log("!")
-    this.otherarea(event)
+    this.doNothing(event)
     return 
   }
+  //視点と終点が同じパネルだった場合何もしない
   if(index==selectingIndex){
-    this.otherarea(event)
+    this.doNothing(event)
     console.log("same panel")
     return
   }
+
+  //異なるパネルであった場合
+  //交換残り回数を減らす
   swapsRemain.value--;
+    
   //選択中を外す
   panel_data[selectingIndex].selected = false
-  //選択中のインデックスと座標を用いて操作を実行
 
-  panel_data[selectingIndex].x = event.x/this.panelSize - panel_data[selectingIndex].x_offset 
-  panel_data[selectingIndex].y = event.y/this.panelSize - panel_data[selectingIndex].y_offset 
-
+  //selectingIndexとindexで位置を変更
   panel_data[selectingIndex].x = index%5
   panel_data[selectingIndex].y = (index-index%5)/5
 
-  console.log("changed!!")
   panel_data[index].x = selectingIndex%5
   panel_data[index].y = (selectingIndex-selectingIndex%5)/5
 
+  //格納位置を入れ替え
   const temp = panel_data[index]
   panel_data[index] = panel_data[selectingIndex]
   panel_data[selectingIndex] = temp
 
+  //選択中のインデックスを直す
   selectingIndex = -1
 
+  //答え合わせ
   this.checkAnswer();
-
-  if(!this.checkGameClear() && swapsRemain.value==0)this.checkGameOver();
 }
 
-//TODO:もっといい命名を行い、コメントを足す
-//選択していないときの例外処理追加
-function otherarea(event) {
-  console.log("other area is startOnMouseDown")
-  console.log(selectingIndex, selectingIndex)
+//同じパネルを入れ替えor外を選択した場合に何もせず選択状態をデフォルトにする
+function doNothing(event) {
+  if(selectingIndex == -1) return
   //選択中を外す
   panel_data[selectingIndex].selected = false
+
   //選択中のインデックスと座標を用いて操作を実行
   panel_data[selectingIndex].x = selectingIndex%5
   panel_data[selectingIndex].y = (selectingIndex-selectingIndex%5)/5
+
+  //選択中のインデックスを直す
   selectingIndex = -1
 }
-
-//TODO:変数参照のバグを直して、マウント時にパネルの状態を変更する関数を生成
-onMounted(() => {
-  console.log("mounted");
-})
 </script>
 
 <template>
@@ -467,7 +495,7 @@ onMounted(() => {
   </header>
   <main>
     <!--画面全体を覆うフレーム:マウスの位置を常に検知するために使用-->
-    <div class="frame" @mousemove="updateOnMouseMove($event)" @mouseup="otherarea($event)">
+    <div class="frame" @mousemove="updateOnMouseMove($event)" @mouseup="doNothing($event)">
       <div class="container">
         <div class="left_icon" href="archive.com">
           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-history" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -487,7 +515,7 @@ onMounted(() => {
         </div>
         <div class="problem">daily waffle #001</div>
         <div class="panels">
-          <one_frame v-for="(ops, index) in one_panels"
+          <one_frame v-for="(ops, index) in onePanels"
             :position="{x:ops.x, y:ops.y}"
             :size="panelSize"
             @mousedown="startOnMouseDown($event, ops.index)"
