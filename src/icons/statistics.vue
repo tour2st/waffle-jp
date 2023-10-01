@@ -12,18 +12,14 @@
         </div>
 </template>
 
-<style>
+<style scoped>
 .right_icon {
   position: absolute;
   top: 0;
   left: 100%;
   width: 10vw;
   height: 10vw;
-  z-index: 1;
   transform: translate(-100%, 0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .icon {

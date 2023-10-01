@@ -10,17 +10,13 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .left_icon {
   position: absolute;
   top: 0;
   left: 0;
   width: 10vw;
   height: 10vw;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .icon {

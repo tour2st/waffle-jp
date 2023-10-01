@@ -526,7 +526,7 @@ function doNothing(event) {
           />
         </div>
         <!--残り操作回数カウンター-->
-        <div class="counter">{{swapsRemain}} swaps remaining</div>
+        <div class="swap-remain-counter">{{swapsRemain}} swaps remaining</div>
       </div>
     </div>
   </body>
@@ -534,11 +534,6 @@ function doNothing(event) {
 
 
 <style scoped>
-/*base.cssを活用して記述量を全体的に減らす*/
-/*もっと分かりやすいクラス名を使う*/
-* {
-  font-family: 'M PLUS Rounded 1c', sans-serif;
-}
 .mouse-tracker {
   position: absolute;
   top: 0;
@@ -550,18 +545,12 @@ function doNothing(event) {
 }
 .container {
   position: absolute;
-  top: 0px;
-  left: 50%;
-  transform: translate(-50%, 0);
+  top: 0;
 
   width: min(70vw, 70vh);
   height: min(90vw, 100vh);
 
   background-color: white;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
 }
 .title {
   font-size: 5vw;
@@ -570,7 +559,7 @@ function doNothing(event) {
   margin: 5vw;
   font-size: 3vw;
 }
-.counter {
+.swap-remain-counter {
   margin: 3vw;
   font-size: 3vw;
 }
@@ -578,6 +567,5 @@ function doNothing(event) {
   position: relative;
   width: 54.1vw;
   height: 54.6vw;
-  flex-shrink:0
 }
 </style>

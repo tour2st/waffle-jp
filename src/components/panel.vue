@@ -23,10 +23,6 @@ const props = defineProps({
     required: false
   }
 })
-
-onMounted(() => {
-  console.log(props.letter)
-})
 </script>
 
 <template>
@@ -38,11 +34,6 @@ onMounted(() => {
 <style scoped>
 /*パネルの基礎デザイン*/
 .panel {
-  /*パネル内の文字を中央ぞろえ*/
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   /*パネルサイズ*/
   width: 10vw;
   height: 10vw;
