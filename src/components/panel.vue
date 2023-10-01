@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-defineProps({
+const props = defineProps({
   letter : {
     type: String,
     required: true
@@ -24,7 +24,9 @@ defineProps({
   }
 })
 
-
+onMounted(() => {
+  console.log(props.letter)
+})
 </script>
 
 <template>

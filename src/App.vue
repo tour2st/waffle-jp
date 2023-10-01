@@ -1,6 +1,8 @@
 <script setup>
 import panel from './components/panel.vue'
+import archive from './icons/archive.vue'
 import one_frame from './components/1-frame.vue'
+import statistics from './icons/statistics.vue'
 import { reactive, ref, onMounted } from 'vue'
 
 //selectingIndex:= [-1] -> 何も選択していない , [0, 1, 2 ... -> その番号を選択中
@@ -334,8 +336,11 @@ function updateOnMouseMove(event)
 
     //propsとして渡している(x,y)をマウスに合わせて変更
     //offsetを埋め合わせて常にパネルの同じ部分をつかめるようにする
-    panel_data[selectingIndex].x = event.x/this.panelSize - panel_data[selectingIndex].x_offset
-    panel_data[selectingIndex].y = event.y/this.panelSize - panel_data[selectingIndex].y_offset
+
+    console.log()
+
+    panel_data[selectingIndex].x = event.x/(window.innerWidth*0.11).toFixed() - panel_data[selectingIndex].x_offset
+    panel_data[selectingIndex].y = event.y/(window.innerWidth*0.11).toFixed() - panel_data[selectingIndex].y_offset
   }
 }
 
@@ -350,8 +355,8 @@ function startOnMouseDown(event, index) {
   panel_data[selectingIndex].selected = true
   
   //パネルとカーソルの間の差分更新
-  panel_data[selectingIndex].x_offset = (event.x/this.panelSize - panel_data[selectingIndex].x)
-  panel_data[selectingIndex].y_offset = (event.y/this.panelSize - panel_data[selectingIndex].y)
+  panel_data[selectingIndex].x_offset = (event.x/(window.innerWidth*0.11).toFixed() - panel_data[selectingIndex].x)
+  panel_data[selectingIndex].y_offset = (event.y/(window.innerWidth*0.11).toFixed() - panel_data[selectingIndex].y)
 }
 
 
@@ -484,56 +489,47 @@ function doNothing(event) {
 </script>
 
 <template>
-  <!--コメントを足す　&& アイコン部分は子コンポーネントに分割-->
+  <!--googlefont読み込み-->
     <head>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&family=Onest:wght@900&display=swap" rel="stylesheet">
     </head>
-  <header>
-    <div class="title">waffle JP</div>
-  </header>
-  <main>
-    <!--画面全体を覆うフレーム:マウスの位置を常に検知するために使用-->
-    <div class="frame" @mousemove="updateOnMouseMove($event)" @mouseup="doNothing($event)">
+    <body>
+    <!--画面全体を覆うトラッカー:マウスの位置を画面全体で検知-->
+    <div class="mouse-tracker" @mousemove="updateOnMouseMove($event)" @mouseup="doNothing($event)">
+      <!--コンテナ:横幅を制限することで画面サイズに対応-->
       <div class="container">
-        <div class="left_icon" href="archive.com">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-history" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M12 8l0 4l2 2"></path>
-            <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"></path>
-          </svg>
-        </div>
-        <div class="right_icon" href="archive.com">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chart-bar" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M3 12m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
-            <path d="M9 8m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
-            <path d="M15 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
-            <path d="M4 20l14 0"></path>
-          </svg>
-        </div>
-        <div class="problem">daily waffle #001</div>
-        <div class="panels">
+        <div class="title">waffle JP</div>
+        <archive/>
+        <statistics/>
+        <!--問題ID:-->
+        <div class="problemID">daily waffle #001</div>
+
+        <!--ゲーム盤面-->
+        <div class="game-board">
+          <!--フレーム:入力がどのパネルで行われたかを検知しindexを渡す-->
           <one_frame v-for="(ops, index) in onePanels"
             :position="{x:ops.x, y:ops.y}"
-            :size="panelSize"
+            :size="panelSize.value"
             @mousedown="startOnMouseDown($event, ops.index)"
             @mouseup.stop="endOnMouseUp($event, ops.index)"
           />
-          <!--各パネル:配列上のデータをpropsとして渡す-->
+          <!--各パネル:パネルの表示-->
           <panel v-for="(pd, index) in panel_data" 
             :letter="pd.letter" 
             :status="pd.status"
             :position="{x:pd.x, y:pd.y}"
             :offset="{x_offset:pd.x_offset, y_offset:pd.y_offset}"
             :isselect="pd.selected"
+            :size="panelSize.value"
           />
         </div>
+        <!--残り操作回数カウンター-->
         <div class="counter">{{swapsRemain}} swaps remaining</div>
       </div>
     </div>
-  </main>
+  </body>
 </template>
 
 
@@ -543,84 +539,45 @@ function doNothing(event) {
 * {
   font-family: 'M PLUS Rounded 1c', sans-serif;
 }
-
-.icon {
-  transform: scale(1.5,1.5);
-  cursor: pointer;
-}
-.title {
-  position: absolute;
-  top: 0;
-  left:50%;
-  transform: translate(-50%,0);
-  font-size: 5vw;
-  z-index: 1;
-}
-
-.left_icon {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 10vw;
-  height: 10vw;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.right_icon {
-  position: absolute;
-  top: 0;
-  left: 100%;
-  width: 10vw;
-  height: 10vw;
-  z-index: 1;
-  transform: translate(-100%, 0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.frame {
+.mouse-tracker {
   position: absolute;
   top: 0;
   left: 0;
   width:100%;
   height:100%;
+  
   background-color: #eee;
-  justify-content: center;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
 }
-
-.panels {
-  position: relative;
-  width: 54.1vw;
-  height: 54.6vw;
-}
-
-.problem {
-  margin: 5vw;
-  font-size: 3vw;
-}
-
-.counter {
-  margin: 3vw;
-  font-size: 3vw;
-}
-
 .container {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translate(-50%, 0);
+
+  width: min(70vw, 70vh);
+  height: min(90vw, 100vh);
+
   background-color: white;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: center;
-  
-  position: absolute;
-  top: 0px;
-
-  width: 70vw;
-  height: 90vw;
+}
+.title {
+  font-size: 5vw;
+}
+.problemID {
+  margin: 5vw;
+  font-size: 3vw;
+}
+.counter {
+  margin: 3vw;
+  font-size: 3vw;
+}
+.game-board {
+  position: relative;
+  width: 54.1vw;
+  height: 54.6vw;
+  flex-shrink:0
 }
 </style>
