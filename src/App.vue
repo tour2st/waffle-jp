@@ -509,14 +509,14 @@ function doNothing(event) {
         <!--ゲーム盤面-->
         <div class="game-board">
           <!--フレーム:入力がどのパネルで行われたかを検知しindexを渡す-->
-          <one_frame v-for="(ops, index) in onePanels"
+          <one_frame v-for="(ops, key, index) in onePanels" :key="index"
             :position="{x:ops.x, y:ops.y}"
             :size="panelSize.value"
             @mousedown="startOnMouseDown($event, ops.index)"
             @mouseup.stop="endOnMouseUp($event, ops.index)"
           />
           <!--各パネル:パネルの表示-->
-          <panel v-for="(pd, index) in panel_data" 
+          <panel v-for="(pd, key, index) in panel_data" :key="index" 
             :letter="pd.letter" 
             :status="pd.status"
             :position="{x:pd.x, y:pd.y}"
