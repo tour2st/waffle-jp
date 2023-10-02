@@ -490,7 +490,7 @@ function doNothing(event) {
 
 <template>
   <!--googlefont読み込み-->
-    <head>
+  <head>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&family=Onest:wght@900&display=swap" rel="stylesheet">
@@ -547,25 +547,26 @@ function doNothing(event) {
   position: absolute;
   top: 0;
 
-  width: min(70vw, 70vh);
-  height: min(90vw, 100vh);
+  width: min(100vw, 70vh);
+  height: 100%;
 
   background-color: white;
 }
 .title {
-  font-size: 5vw;
+  font-size: 5vh;
 }
 .problemID {
-  margin: 5vw;
-  font-size: 3vw;
+  margin: 5vh;
+  font-size: 3vh;
 }
 .swap-remain-counter {
-  margin: 3vw;
-  font-size: 3vw;
+  margin: 3vh;
+  font-size: 3vh;
 }
 .game-board {
   position: relative;
-  width: 54.1vw;
-  height: 54.6vw;
+  width: 95%;
+  aspect-ratio: 1;
+  background-color:aqua;
 }
 </style>

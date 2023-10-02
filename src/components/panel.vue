@@ -26,7 +26,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <span class="panel" :class="[status, {'selecting': isselect}]" :style="{top:position.y*11+'vw', left:position.x*11+'vw'}">
+  <span class="panel" :class="[status, {'selecting': isselect}]" :style="{top:position.y*20+'%', left:position.x*20+'%'}">
     <p class="letter">{{ letter }}</p>
   </span>
 </template>
@@ -35,22 +35,24 @@ const props = defineProps({
 /*パネルの基礎デザイン*/
 .panel {
   /*パネルサイズ*/
-  width: 10vw;
-  height: 10vw;
+  width: 19%;
+  height:19%;
+  margin:0.5%;
+
+  border-radius: 20%;
+  border-style: solid;
+  border-width: 0.1vw;
+  box-sizing: border-box;
 
   /*文字サイズ*/
   font-family: sans-serif;
   font-weight: 700;
-  font-size: max(4.5vw,min(30px,10vw));
+  font-size: max(4.5vh,30px);
 
   /*座標*/
   position: absolute;
   top:0px;
   left:0px;
-
-  border-radius: 2vw;
-  border-style: solid;
-  border-width: 0.1vw;
 
   pointer-events: none;
 }
