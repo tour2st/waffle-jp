@@ -26,7 +26,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <span class="panel" :class="[status, {'selecting': isselect}]" :style="{top:position.y*20+'%', left:position.x*20+'%'}">
+  <span class="panel" :class="[status, {'selecting': isselect}]" :style="{top:position.y, left:position.x}">
     <p class="letter">{{ letter }}</p>
   </span>
 </template>
@@ -34,6 +34,7 @@ const props = defineProps({
 <style scoped>
 /*パネルの基礎デザイン*/
 .panel {
+  transition: 0.5s;
   /*パネルサイズ*/
   width: 19%;
   height:19%;
@@ -58,7 +59,8 @@ const props = defineProps({
 }
 /*選択中のパネル*/
 .selecting {
-  transition-duration: 0ms;
+  transition: top 0s, left 0s;
+  transition: transform 0.5s;
   transform:scale(1.2,1.2);
 }
 
