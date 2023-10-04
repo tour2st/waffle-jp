@@ -19,11 +19,11 @@ const panelSize = ref((window.innerWidth*0.11).toFixed())
 "_":すでに一致しているorパネルが存在しない
 "[あ-ん]":その文字が答え
 */
-const answerLetter = [["あ","い","う","あ","あ"],
-                      ["あ", "_","え", "_","あ"],
-                      ["あ","あ","お","あ","あ"],
-                      ["あ", "_","あ", "_","あ"],
-                      ["あ","あ","あ","あ","あ"]]
+const answerLetter = [["え","り","ご","の","み"],
+                      ["ん", "_","よ", "_","ぼ"],
+                      ["し","よ","う","こ","う"],
+                      ["ゆ", "_","た", "_","じ"],
+                      ["つ","ぶ","し","あ","ん"]]
 
 /* 
 パネルのインデックスとフレームのインデックスを変換
@@ -60,7 +60,7 @@ const onePanels = reactive([{x:0, y:0, index: 0},{x:1, y:0, index: 1},{x:2, y:0,
 */
 const panel_data = reactive([
   {
-    letter: "あ",
+    letter: "え",
     x: 0,
     y: 0,
     x_offset: 0,
@@ -71,7 +71,7 @@ const panel_data = reactive([
 
   },
   {
-    letter: "い",
+    letter: "よ",
     x: 1,
     y: 0,
     x_offset: 0,
@@ -93,7 +93,7 @@ const panel_data = reactive([
 
   },
   {
-    letter: "え",
+    letter: "ご",
     x: 3,
     y: 0,
     x_offset: 0,
@@ -104,7 +104,7 @@ const panel_data = reactive([
 
   },
   {
-    letter: "お",
+    letter: "み",
     x: 4,
     y: 0,
     x_offset: 0,
@@ -115,7 +115,7 @@ const panel_data = reactive([
 
   },
   {
-    letter: "か",
+    letter: "ぼ",
     x: 0,
     y: 1,
     x_offset: 0,
@@ -126,7 +126,7 @@ const panel_data = reactive([
 
   },
   {
-    letter: "き",
+    letter: "-",
     x: 1,
     y: 1,
     x_offset: 0,
@@ -137,7 +137,7 @@ const panel_data = reactive([
 
   },
   {
-    letter: "く",
+    letter: "り",
     x: 2,
     y: 1,
     x_offset: 0,
@@ -148,7 +148,7 @@ const panel_data = reactive([
 
   },
   {
-    letter: "け",
+    letter: "-",
     x: 3,
     y: 1,
     x_offset: 0,
@@ -159,119 +159,20 @@ const panel_data = reactive([
 
   },
   {
-    letter: "こ",
+    letter: "う",
     x: 4,
     y: 1,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "さ",
-    x: 0,
-    y: 2,
-    x_offset: 0,
-    y_offset: 0,
-    status: "blow",
     selected: false,
     size: panelSize
 
   },
   {
     letter: "し",
-    x: 1,
-    y: 2,
-    x_offset: 0,
-    y_offset: 0,
-    status: "miss",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "す",
-    x: 2,
-    y: 2,
-    x_offset: 0,
-    y_offset: 0,
-    status: "hit",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "せ",
-    x: 3,
-    y: 2,
-    x_offset: 0,
-    y_offset: 0,
-    status: "blow",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "そ",
-    x: 4,
-    y: 2,
-    x_offset: 0,
-    y_offset: 0,
-    status: "miss",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "た",
     x: 0,
-    y: 3,
-    x_offset: 0,
-    y_offset: 0,
-    status: "hit",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "ち",
-    x: 1,
-    y: 3,
-    x_offset: 0,
-    y_offset: 0,
-    status: "nothing",
-    selected: false,
-    size: panelSize,
-
-  },
-  {
-    letter: "つ",
-    x: 2,
-    y: 3,
-    x_offset: 0,
-    y_offset: 0,
-    status: "miss",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "て",
-    x: 3,
-    y: 3,
-    x_offset: 0,
-    y_offset: 0,
-    status: "nothing",
-    selected: false,
-    size: panelSize,
-
-  },
-  {
-    letter: "そ",
-    x: 4,
-    y: 3,
+    y: 2,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -280,42 +181,9 @@ const panel_data = reactive([
 
   },
   {
-    letter: "な",
-    x: 0,
-    y: 4,
-    x_offset: 0,
-    y_offset: 0,
-    status: "miss",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "に",
+    letter: "ゆ",
     x: 1,
-    y: 4,
-    x_offset: 0,
-    y_offset: 0,
-    status: "hit",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "ぬ",
-    x: 2,
-    y: 4,
-    x_offset: 0,
-    y_offset: 0,
-    status: "blow",
-    selected: false,
-    size: panelSize
-
-  },
-  {
-    letter: "ね",
-    x: 3,
-    y: 4,
+    y: 2,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -325,6 +193,138 @@ const panel_data = reactive([
   },
   {
     letter: "の",
+    x: 2,
+    y: 2,
+    x_offset: 0,
+    y_offset: 0,
+    status: "hit",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "こ",
+    x: 3,
+    y: 2,
+    x_offset: 0,
+    y_offset: 0,
+    status: "blow",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "ん",
+    x: 4,
+    y: 2,
+    x_offset: 0,
+    y_offset: 0,
+    status: "miss",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "よ",
+    x: 0,
+    y: 3,
+    x_offset: 0,
+    y_offset: 0,
+    status: "hit",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "-",
+    x: 1,
+    y: 3,
+    x_offset: 0,
+    y_offset: 0,
+    status: "nothing",
+    selected: false,
+    size: panelSize,
+
+  },
+  {
+    letter: "あ",
+    x: 2,
+    y: 3,
+    x_offset: 0,
+    y_offset: 0,
+    status: "miss",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "-",
+    x: 3,
+    y: 3,
+    x_offset: 0,
+    y_offset: 0,
+    status: "nothing",
+    selected: false,
+    size: panelSize,
+
+  },
+  {
+    letter: "じ",
+    x: 4,
+    y: 3,
+    x_offset: 0,
+    y_offset: 0,
+    status: "blow",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "し",
+    x: 0,
+    y: 4,
+    x_offset: 0,
+    y_offset: 0,
+    status: "miss",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "ぶ",
+    x: 1,
+    y: 4,
+    x_offset: 0,
+    y_offset: 0,
+    status: "hit",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "つ",
+    x: 2,
+    y: 4,
+    x_offset: 0,
+    y_offset: 0,
+    status: "blow",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "た",
+    x: 3,
+    y: 4,
+    x_offset: 0,
+    y_offset: 0,
+    status: "miss",
+    selected: false,
+    size: panelSize
+
+  },
+  {
+    letter: "ん",
     x: 4,
     y: 4,
     x_offset: 0,
@@ -381,28 +381,11 @@ function startOnMouseDown(event, swapIndex) {
 //答えに合わせてパネルのhit/blow/missを切り替え
 function checkAnswer(){
 
-  //ゲームクリアしているならゲームクリア状態に変更
-  if(this.checkGameClear()){
-    if(flag) for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
-      if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameclear"
-    }
-    return
-  }
-  //ゲームオーバーならゲームオーバー状態に変更
-  if(this.checkGameOver())
-  {
-    for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
-      console.log(i,j)
-      if(i%2==0 || j%2==0) panel_data[5*i+j].status = "gameover"
-    }
-    return
-  }
-
   //答えと一致するならhitに変更
   for(let i=0; i<5; i++) for(let j=0; j<5; j++){
-    if(answerLetter[i][j]!="_" && answerLetter[i][j]==panel_data[5*i+j].letter){
+    if(answerLetter[i][j]!="_" && answerLetter[i][j]==panel_data[indexConverter[5*i+j]].letter){
       answerLetter[i][j] = "_"
-      panel_data[5*i+j].status = "hit"
+      panel_data[indexConverter[5*i+j]].status = "hit"
     }
   }
 
@@ -412,21 +395,38 @@ function checkAnswer(){
     let is_blow = false;
     
     //行を見る
-    if(j%2==0) for(let ki=0; ki<5; ki++) if(!is_blow && answerLetter[ki][j]==panel_data[5*i+j].letter){
+    if(j%2==0) for(let ki=0; ki<5; ki++) if(!is_blow && answerLetter[ki][j]==panel_data[indexConverter[5*i+j]].letter){
       is_blow = true
-      console.log(panel_data[5*i+j].letter)
+      console.log(panel_data[indexConverter[5*i+j]].letter)
       break
     }
     //列を見る
-    if(i%2==0) for(let kj=0; kj<5; kj++) if(!is_blow && answerLetter[i][kj]==panel_data[5*i+j].letter){
+    if(i%2==0) for(let kj=0; kj<5; kj++) if(!is_blow && answerLetter[i][kj]==panel_data[indexConverter[5*i+j]].letter){
       is_blow = true
       break
     }
     //is_blowならばblowに変更
     //そうでないならばmissに変更
-    if(is_blow) panel_data[5*i+j].status = "blow" 
-    else panel_data[5*i+j].status = "miss"
+    if(is_blow) panel_data[indexConverter[5*i+j]].status = "blow" 
+    else panel_data[indexConverter[5*i+j]].status = "miss"
     is_blow = false
+  }
+
+  //ゲームクリアしているならゲームクリア状態に変更
+  if(this.checkGameClear()){
+    console.log("clear!");
+    for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
+      if(i%2==0 || j%2==0) panel_data[indexConverter[5*i+j]].status = "gameclear"
+    }
+    return
+  }
+  //ゲームオーバーならゲームオーバー状態に変更
+  if(this.checkGameOver())
+  {
+    for(let i=0; i<5; i++) for(let j=0; j<5; j++) {
+      if(i%2==0 || j%2==0) panel_data[indexConverter[5*i+j]].status = "gameover"
+    }
+    return
   }
 }
 
@@ -585,6 +585,5 @@ function doNothing(event) {
   position: relative;
   width: 95%;
   aspect-ratio: 1;
-  background-color:aqua;
 }
 </style>
