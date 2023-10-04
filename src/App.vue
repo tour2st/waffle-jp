@@ -61,8 +61,8 @@ const onePanels = reactive([{x:0, y:0, index: 0},{x:1, y:0, index: 1},{x:2, y:0,
 const panel_data = reactive([
   {
     letter: "あ",
-    x: '0%',
-    y: '0%',
+    x: 0,
+    y: 0,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
@@ -72,8 +72,8 @@ const panel_data = reactive([
   },
   {
     letter: "い",
-    x: '20%',
-    y: '0%',
+    x: 1,
+    y: 0,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -83,8 +83,8 @@ const panel_data = reactive([
   },
   {
     letter: "う",
-    x: '40%',
-    y: '0%',
+    x: 2,
+    y: 0,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -94,8 +94,8 @@ const panel_data = reactive([
   },
   {
     letter: "え",
-    x: '60%',
-    y: '0%',
+    x: 3,
+    y: 0,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
@@ -105,8 +105,8 @@ const panel_data = reactive([
   },
   {
     letter: "お",
-    x: '80%',
-    y: '0%',
+    x: 4,
+    y: 0,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -116,8 +116,8 @@ const panel_data = reactive([
   },
   {
     letter: "か",
-    x: '0%',
-    y: '20%',
+    x: 0,
+    y: 1,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -127,8 +127,8 @@ const panel_data = reactive([
   },
   {
     letter: "き",
-    x: '20%',
-    y: '20%',
+    x: 1,
+    y: 1,
     x_offset: 0,
     y_offset: 0,
     status: "nothing",
@@ -138,8 +138,8 @@ const panel_data = reactive([
   },
   {
     letter: "く",
-    x: '40%',
-    y: '20%',
+    x: 2,
+    y: 1,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -149,8 +149,8 @@ const panel_data = reactive([
   },
   {
     letter: "け",
-    x: '60%',
-    y: '20%',
+    x: 3,
+    y: 1,
     x_offset: 0,
     y_offset: 0,
     status: "nothing",
@@ -160,8 +160,8 @@ const panel_data = reactive([
   },
   {
     letter: "こ",
-    x: '80%',
-    y: '20%',
+    x: 4,
+    y: 1,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
@@ -171,8 +171,8 @@ const panel_data = reactive([
   },
   {
     letter: "さ",
-    x: '0%',
-    y: '40%',
+    x: 0,
+    y: 2,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -182,8 +182,8 @@ const panel_data = reactive([
   },
   {
     letter: "し",
-    x: '20%',
-    y: '40%',
+    x: 1,
+    y: 2,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -193,8 +193,8 @@ const panel_data = reactive([
   },
   {
     letter: "す",
-    x: '40%',
-    y: '40%',
+    x: 2,
+    y: 2,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
@@ -204,8 +204,8 @@ const panel_data = reactive([
   },
   {
     letter: "せ",
-    x: '60%',
-    y: '40%',
+    x: 3,
+    y: 2,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -215,8 +215,8 @@ const panel_data = reactive([
   },
   {
     letter: "そ",
-    x: '80%',
-    y: '40%',
+    x: 4,
+    y: 2,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -226,8 +226,8 @@ const panel_data = reactive([
   },
   {
     letter: "た",
-    x: '0%',
-    y: '60%',
+    x: 0,
+    y: 3,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
@@ -237,8 +237,8 @@ const panel_data = reactive([
   },
   {
     letter: "ち",
-    x: '20%',
-    y: '60%',
+    x: 1,
+    y: 3,
     x_offset: 0,
     y_offset: 0,
     status: "nothing",
@@ -248,8 +248,8 @@ const panel_data = reactive([
   },
   {
     letter: "つ",
-    x: '40%',
-    y: '60%',
+    x: 2,
+    y: 3,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -259,8 +259,8 @@ const panel_data = reactive([
   },
   {
     letter: "て",
-    x: '60%',
-    y: '60%',
+    x: 3,
+    y: 3,
     x_offset: 0,
     y_offset: 0,
     status: "nothing",
@@ -269,9 +269,9 @@ const panel_data = reactive([
 
   },
   {
-    letter: "と",
-    x: '80%',
-    y: '60%',
+    letter: "そ",
+    x: 4,
+    y: 3,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -281,8 +281,8 @@ const panel_data = reactive([
   },
   {
     letter: "な",
-    x: '0%',
-    y: '80%',
+    x: 0,
+    y: 4,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -292,8 +292,8 @@ const panel_data = reactive([
   },
   {
     letter: "に",
-    x: '20%',
-    y: '80%',
+    x: 1,
+    y: 4,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
@@ -303,8 +303,8 @@ const panel_data = reactive([
   },
   {
     letter: "ぬ",
-    x: '40%',
-    y: '80%',
+    x: 2,
+    y: 4,
     x_offset: 0,
     y_offset: 0,
     status: "blow",
@@ -314,8 +314,8 @@ const panel_data = reactive([
   },
   {
     letter: "ね",
-    x: '60%',
-    y: '80%',
+    x: 3,
+    y: 4,
     x_offset: 0,
     y_offset: 0,
     status: "miss",
@@ -325,8 +325,8 @@ const panel_data = reactive([
   },
   {
     letter: "の",
-    x: '80%',
-    y: '80%',
+    x: 4,
+    y: 4,
     x_offset: 0,
     y_offset: 0,
     status: "hit",
@@ -348,8 +348,11 @@ function updateOnMouseMove(event)
 
     console.log()
 
-    panel_data[indexConverter[selectingIndex]].x = event.x - panel_data[indexConverter[selectingIndex]].x_offset + 'px'
-    panel_data[indexConverter[selectingIndex]].y = event.y - panel_data[indexConverter[selectingIndex]].y_offset + 'px'
+    let obj = document.getElementById('game-board')
+    let result = obj.getBoundingClientRect();
+    
+    panel_data[indexConverter[selectingIndex]].x = 5*(event.x - result.x) / result.width - panel_data[indexConverter[selectingIndex]].x_offset
+    panel_data[indexConverter[selectingIndex]].y = 5*(event.y - result.y) / result.height - panel_data[indexConverter[selectingIndex]].y_offset
   }
 }
 
@@ -364,9 +367,14 @@ function startOnMouseDown(event, swapIndex) {
   panel_data[indexConverter[selectingIndex]].selected = true
   
   //パネルとカーソルの間の差分更新
-  panel_data[indexConverter[selectingIndex]].x_offset = event.x - parseInt(panel_data[indexConverter[selectingIndex]].x)  + 'px'
-  panel_data[indexConverter[selectingIndex]].y_offset = event.y - parseInt(panel_data[indexConverter[selectingIndex]].y)  + 'px'
-  console.log(panel_data[indexConverter[selectingIndex]].x_offset)
+  let obj = document.getElementById('game-board')
+  let result = obj.getBoundingClientRect();
+
+  let panelX = result.x + result.width*(selectingIndex%5)/5;
+  let panelY = result.y + result.height*((selectingIndex-selectingIndex%5)/5)/5;
+
+  panel_data[indexConverter[selectingIndex]].x_offset = 5*(event.x - panelX) / result.width
+  panel_data[indexConverter[selectingIndex]].y_offset = 5*(event.y - panelY) / result.height
 }
 
 
@@ -465,11 +473,11 @@ function endOnMouseUp(event, swapIndex) {
   panel_data[indexConverter[selectingIndex]].selected = false
 
   //selectingIndexとindexで位置を変更
-  panel_data[indexConverter[selectingIndex]].x = swapIndex%5 * 20 + '%'
-  panel_data[indexConverter[selectingIndex]].y = (swapIndex-swapIndex%5) * 4 + '%'
+  panel_data[indexConverter[selectingIndex]].x = swapIndex%5
+  panel_data[indexConverter[selectingIndex]].y = (swapIndex-swapIndex%5)/5
 
-  panel_data[indexConverter[swapIndex]].x = selectingIndex%5 * 20 + '%'
-  panel_data[indexConverter[swapIndex]].y = (selectingIndex-selectingIndex%5) * 4 + '%'
+  panel_data[indexConverter[swapIndex]].x = selectingIndex%5
+  panel_data[indexConverter[swapIndex]].y = (selectingIndex-selectingIndex%5)/5
 
   //格納位置を入れ替え
   const swap = indexConverter[swapIndex]
@@ -490,8 +498,8 @@ function doNothing(event) {
   panel_data[indexConverter[selectingIndex]].selected = false
 
   //選択中のインデックスと座標を用いて操作を実行
-  panel_data[indexConverter[selectingIndex]].x = selectingIndex%5 * 20 + '%'
-  panel_data[indexConverter[selectingIndex]].y = (selectingIndex-selectingIndex%5) * 4 + '%'
+  panel_data[indexConverter[selectingIndex]].x = selectingIndex%5
+  panel_data[indexConverter[selectingIndex]].y = (selectingIndex-selectingIndex%5)/5
 
   //選択中のインデックスを直す
   selectingIndex = -1
@@ -517,7 +525,7 @@ function doNothing(event) {
         <div class="problemID">daily waffle #001</div>
 
         <!--ゲーム盤面-->
-        <div class="game-board">
+        <div class="game-board" id="game-board">
           <!--フレーム:入力がどのパネルで行われたかを検知しindexを渡す-->
           <one_frame v-for="(ops, key, index) in onePanels" :key="index"
             :position="{x:ops.x, y:ops.y}"

@@ -26,7 +26,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <span class="panel" :class="[status, {'selecting': isselect}]" :style="{top:position.y, left:position.x}">
+  <span class="panel" :class="[status, {'selecting': isselect}]" :style="{top:position.y*20+'%', left:position.x*20+'%'}">
     <p class="letter">{{ letter }}</p>
   </span>
 </template>
